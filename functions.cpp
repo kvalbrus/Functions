@@ -1,81 +1,50 @@
-// Функция | 1 прототип | Проверка          |
-//_________|____________|_работоспособности_|_______________________________________________
-// puts    |  +         |                   |
-// strchr  |  +         |                   |
-// strlen  |  +         |                   |
-// strcpy  |  +         |                   |
-// strncpy |  +         |                   |
-// strcat  |  +         |                   |
-// strncat |  +         |                   |
-// fgets   |  +         |                   |
-// strdup  |  +         |                   |
-// getline |  +         |                   |
-
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 
-int puts(const char* str);
-int strchr(const char* str, int symbol);
-size_t strlen(const char* str);
-char* strcpy(char* destptr, const char* srcptr);
-char* strncpy(char* destptr, const char* srcptr, size_t num);
-char* strcat(char* destptr, const char* srcptr);
-char* strncat(char* destptr, const char* srcptr, size_t num);
-char* fgets(char* str, int num, FILE* stream);
-char* strdup(const char* str);
-char* getline(char* str, int size, char split);
+#include "functions.h"
 
-
+// пишет в конце строки /n
 int puts(const char* str)
-{
-    
-    int i = 0;
-    for (; str[i]; i++)
+{    
+
+    for (; *str; str++)
     {
-        if (putchar(str[i]) == EOF)
+        if (putchar(*str) == EOF)
         {
             return EOF;
         }
     }
 
-    if (str[i] == '\0')
-    {
-        putchar('\n');
+    putchar('\n');
         
-        return 1;
-    }
-
-    return EOF;
+    return 1;
 }
 
-int strchr(const char* str, int symbol)
+// позиция найденого символа
+const char* strchr(const char* str, int symbol)
 {
-    for (int i = 0; str[i]; i++)
+    for (; *str; str++)
     {
-        if (symbol == str[i])
+        if (symbol == *str)
         {
-            return i;
+            return str;
         }
     }
 
     return NULL;
 }
 
+// длина строки
 size_t strlen(const char* str)
 {
-    int i = 0;
-    for (; str[i]; i++)
-    {
-        if (str[i] == '\0')
-        {
-            break;
-        }
-    }
+    size_t i = 0;
+    for (; str[i]; i++) {}
 
     return i;
 }
 
+// копирует строку
 char* strcpy(char* destptr, const char* srcptr)
 {
     int i = 0;
@@ -89,10 +58,11 @@ char* strcpy(char* destptr, const char* srcptr)
     return destptr;
 }
 
+// копирует строку
 char* strncpy(char* destptr, const char* srcptr, size_t num)
 {
-    int i = 0;
-    for (; i < num; i++)
+    size_t i = 0;
+    for (; i < num - 1; i++)
     {
         destptr[i] = srcptr[i];
     }
@@ -102,11 +72,12 @@ char* strncpy(char* destptr, const char* srcptr, size_t num)
     return destptr;
 }
 
+// присоединяет строки
 char* strcat(char* destptr, const char* srcptr)
 {
     int i = strlen(destptr);
-
     int j = 0;
+
     for(; srcptr[j]; j++)
     {
         destptr[i + j] = srcptr[j];
@@ -122,7 +93,7 @@ char* strncat(char* destptr, const char* srcptr, size_t num)
     int i = strlen(destptr);
     int j = 0;
 
-    for (; j < num; j++)
+    for (; j < num - 1; j++) // ! не более чем num
     {
         destptr[i + j] = srcptr[j];
     }
@@ -140,12 +111,7 @@ char* fgets(char* str, int num, FILE* stream)
     {
         ch = getc(stream);
         
-        if (ch == EOF)
-        {
-            return NULL;
-        }
-
-        if (ch == '\n')
+        if (ch == EOF || ch == '\n')
         {
             break;
         }
@@ -174,22 +140,25 @@ char* strdup(const char* str)
     return destptr;
 }
 
-char* getline(char* str, int size, char split)
+ssize_t getline(char **lineptr, size_t *n, FILE *stream)
 {
-    int i = 0;
-    char ch = NULL;
-
-    for (; true; i++)
+    if (stream == NULL || n == NULL || lineptr == NULL)
     {
-        scanf("%c", &ch);
-
-        if (i >= size - 1 || ch == split || ch == '\n')
-        {
-            break;
-        }
-
-        str[i] = ch;
+        return EINVAL;
     }
 
-    return str;
+    char symbol = ' ';
+    ssize_t i = 0;
+
+    for (; stream; i++)
+    {
+        symbol = getc(stream);
+        *lineptr[i] = symbol;
+    }
+
+    return i;
 }
+
+// cppreference
+// man *function name*
+// exmp: $ man getline
