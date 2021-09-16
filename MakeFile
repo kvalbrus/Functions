@@ -1,0 +1,23 @@
+CC = g++
+
+all: main
+
+main: main.o functions.o test.o
+	$(CC) main.o functions.o test.o -o main
+	./main
+
+main.o: main.cpp
+	$(CC) -c -o main.o main.cpp
+
+functions.o: functions.cpp
+    $(CC) -c -o functions.o functions.cpp
+
+test: test.o functions.o main.o
+	$(CC) functions.o test.o main.o -o test
+	./test
+
+test.o: test.cpp
+    $(CC) -c -o test.o test.cpp
+
+clean:
+	rm *.o
